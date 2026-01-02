@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(ray build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cat:*)",
+      "Bash(npm install)",
+      "Bash(echo:*)",
+      "Bash(bash -l -c:*)",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(npx ray build --help:*)"
+    ]
+  }
+}
