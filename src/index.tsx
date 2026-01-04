@@ -356,7 +356,7 @@ function FolderListItem({ folder, recentProjects, toggleFavorite, openProject, o
             icon={folder.isFavorite ? Icon.StarDisabled : Icon.Star}
             shortcut={{ modifiers: ["cmd"], key: "f" }}
           />
-          <Action title="Open in Cursor Only" onAction={() => openInCursor(folder)} icon={Icon.Code} />
+          <Action title="Open in Cursor Only" onAction={() => openInCursor(folder)} icon={Icon.Code} shortcut={{ modifiers: ["cmd", "shift"], key: "return" }} />
           <Action title="Open in iTerm Only" onAction={() => openInITerm(folder)} icon={Icon.Terminal} />
           <Action title="Open in Chrome Only" onAction={() => openInChrome(folder)} icon={Icon.Globe} />
           <Action.ShowInFinder path={folder.path} />
