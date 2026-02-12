@@ -215,7 +215,7 @@ export default function Command() {
     });
   }
 
-  async function openInChrome(folder: Folder) {
+  async function openInSafari(folder: Folder) {
     const projectType = folder.projectType || "unknown";
     let url = "";
 
@@ -228,33 +228,33 @@ export default function Command() {
     if (!url) {
       await showToast({
         style: Toast.Style.Failure,
-        title: "Cannot open in Chrome",
+        title: "Cannot open in Safari",
         message: "Unknown project type",
       });
       return;
     }
 
-    exec(`open -a "Google Chrome" "${url}"`, async (error) => {
+    exec(`open -a "Safari" "${url}"`, async (error) => {
       if (error) {
         await showToast({
           style: Toast.Style.Failure,
-          title: "Failed to open Chrome",
+          title: "Failed to open Safari",
           message: error.message,
         });
       } else {
         await showToast({
           style: Toast.Style.Success,
-          title: `Opened ${url} in Chrome`,
+          title: `Opened ${url} in Safari`,
         });
       }
     });
   }
 
   async function openProject(folder: Folder) {
-    // Open Cursor, iTerm, and Chrome
+    // Open Cursor, iTerm, and Safari
     openInCursor(folder);
     openInITerm(folder);
-    openInChrome(folder);
+    openInSafari(folder);
   }
 
   // Categorize folders
@@ -284,7 +284,7 @@ export default function Command() {
           {favoriteFolders.length > 0 && (
             <List.Section title="Favorites" subtitle={`${favoriteFolders.length} projects`}>
               {favoriteFolders.map((folder) => (
-                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInChrome={openInChrome} />
+                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInSafari={openInSafari} />
               ))}
             </List.Section>
           )}
@@ -292,7 +292,7 @@ export default function Command() {
           {recentFolders.length > 0 && (
             <List.Section title="Recent" subtitle={`${recentFolders.length} projects`}>
               {recentFolders.map((folder) => (
-                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInChrome={openInChrome} />
+                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInSafari={openInSafari} />
               ))}
             </List.Section>
           )}
@@ -300,7 +300,7 @@ export default function Command() {
           {otherFolders.length > 0 && (
             <List.Section title="All Projects" subtitle={`${otherFolders.length} projects`}>
               {otherFolders.map((folder) => (
-                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInChrome={openInChrome} />
+                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInSafari={openInSafari} />
               ))}
             </List.Section>
           )}
@@ -317,10 +317,10 @@ interface FolderListItemProps {
   openProject: (folder: Folder) => void;
   openInCursor: (folder: Folder) => void;
   openInITerm: (folder: Folder) => void;
-  openInChrome: (folder: Folder) => void;
+  openInSafari: (folder: Folder) => void;
 }
 
-function FolderListItem({ folder, recentProjects, toggleFavorite, openProject, openInCursor, openInITerm, openInChrome }: FolderListItemProps) {
+function FolderListItem({ folder, recentProjects, toggleFavorite, openProject, openInCursor, openInITerm, openInSafari }: FolderListItemProps) {
   const accessories = [];
 
   // Add favorite indicator
@@ -358,7 +358,7 @@ function FolderListItem({ folder, recentProjects, toggleFavorite, openProject, o
           />
           <Action title="Open in Cursor Only" onAction={() => openInCursor(folder)} icon={Icon.Code} shortcut={{ modifiers: ["cmd", "shift"], key: "return" }} />
           <Action title="Open in iTerm Only" onAction={() => openInITerm(folder)} icon={Icon.Terminal} />
-          <Action title="Open in Chrome Only" onAction={() => openInChrome(folder)} icon={Icon.Globe} />
+          <Action title="Open in Safari Only" onAction={() => openInSafari(folder)} icon={Icon.Globe} />
           <Action.ShowInFinder path={folder.path} />
           <Action.CopyToClipboard title="Copy Path" content={folder.path} />
         </ActionPanel>
