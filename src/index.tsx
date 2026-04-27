@@ -177,7 +177,7 @@ export default function Command() {
     });
   }
 
-  async function openInITerm(folder: Folder) {
+  async function openInITerm(folder: Folder, { withClaudeCode = false } = {}) {
     const projectType = folder.projectType || "unknown";
     let command = `cd "${folder.path}"`;
 
@@ -188,12 +188,24 @@ export default function Command() {
       command += " && npm run dev";
     }
 
+    const claudeTabScript = withClaudeCode
+      ? `
+          tell current window
+            create tab with default profile
+            tell current session
+              write text "cd \\"${folder.path.replace(/"/g, '\\"')}\\" && claude"
+            end tell
+          end tell
+        `
+      : "";
+
     const script = `
       tell application "iTerm"
         create window with default profile
         tell current session of current window
           write text "${command.replace(/"/g, '\\"')}"
         end tell
+        ${claudeTabScript}
       end tell
     `;
 
@@ -210,7 +222,44 @@ export default function Command() {
       const projectTypeLabel = projectType === "ddev" ? " (DDEV)" : projectType === "astro" ? " (Astro)" : "";
       await showToast({
         style: Toast.Style.Success,
-        title: `Opened ${folder.name} in iTerm${projectTypeLabel}`,
+        title: `Opened ${folder.name} in iTerm${projectTypeLabel}${withClaudeCode ? " + Claude Code" : ""}`,
+      });
+    });
+  }
+
+  async function openClaudeCode(folder: Folder) {
+    const escapedPath = folder.path.replace(/"/g, '\\"');
+    const script = `
+      tell application "iTerm"
+        if (count of windows) > 0 then
+          tell current window
+            create tab with default profile
+            tell current session
+              write text "cd \\"${escapedPath}\\" && claude"
+            end tell
+          end tell
+        else
+          create window with default profile
+          tell current session of current window
+            write text "cd \\"${escapedPath}\\" && claude"
+          end tell
+        end if
+      end tell
+    `;
+
+    exec(`osascript -e '${script}'`, async (error) => {
+      if (error) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Failed to open Claude Code",
+          message: error.message,
+        });
+        return;
+      }
+
+      await showToast({
+        style: Toast.Style.Success,
+        title: `Started Claude Code in ${folder.name}`,
       });
     });
   }
@@ -251,9 +300,9 @@ export default function Command() {
   }
 
   async function openProject(folder: Folder) {
-    // Open Cursor, iTerm, and Safari
+    // Open Cursor, iTerm (with Claude Code tab), and Safari
     openInCursor(folder);
-    openInITerm(folder);
+    openInITerm(folder, { withClaudeCode: true });
     openInSafari(folder);
   }
 
@@ -284,7 +333,7 @@ export default function Command() {
           {favoriteFolders.length > 0 && (
             <List.Section title="Favorites" subtitle={`${favoriteFolders.length} projects`}>
               {favoriteFolders.map((folder) => (
-                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInSafari={openInSafari} />
+                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openClaudeCode={openClaudeCode} openInSafari={openInSafari} />
               ))}
             </List.Section>
           )}
@@ -292,7 +341,7 @@ export default function Command() {
           {recentFolders.length > 0 && (
             <List.Section title="Recent" subtitle={`${recentFolders.length} projects`}>
               {recentFolders.map((folder) => (
-                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInSafari={openInSafari} />
+                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openClaudeCode={openClaudeCode} openInSafari={openInSafari} />
               ))}
             </List.Section>
           )}
@@ -300,7 +349,7 @@ export default function Command() {
           {otherFolders.length > 0 && (
             <List.Section title="All Projects" subtitle={`${otherFolders.length} projects`}>
               {otherFolders.map((folder) => (
-                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openInSafari={openInSafari} />
+                <FolderListItem key={folder.name} folder={folder} recentProjects={recentProjects} toggleFavorite={toggleFavorite} openProject={openProject} openInCursor={openInCursor} openInITerm={openInITerm} openClaudeCode={openClaudeCode} openInSafari={openInSafari} />
               ))}
             </List.Section>
           )}
@@ -317,10 +366,11 @@ interface FolderListItemProps {
   openProject: (folder: Folder) => void;
   openInCursor: (folder: Folder) => void;
   openInITerm: (folder: Folder) => void;
+  openClaudeCode: (folder: Folder) => void;
   openInSafari: (folder: Folder) => void;
 }
 
-function FolderListItem({ folder, recentProjects, toggleFavorite, openProject, openInCursor, openInITerm, openInSafari }: FolderListItemProps) {
+function FolderListItem({ folder, recentProjects, toggleFavorite, openProject, openInCursor, openInITerm, openClaudeCode, openInSafari }: FolderListItemProps) {
   const accessories = [];
 
   // Add favorite indicator
@@ -358,6 +408,7 @@ function FolderListItem({ folder, recentProjects, toggleFavorite, openProject, o
           />
           <Action title="Open in Cursor Only" onAction={() => openInCursor(folder)} icon={Icon.Code} shortcut={{ modifiers: ["cmd", "shift"], key: "return" }} />
           <Action title="Open in iTerm Only" onAction={() => openInITerm(folder)} icon={Icon.Terminal} />
+          <Action title="Open Claude Code" onAction={() => openClaudeCode(folder)} icon={Icon.Terminal} shortcut={{ modifiers: ["cmd", "shift"], key: "c" }} />
           <Action title="Open in Safari Only" onAction={() => openInSafari(folder)} icon={Icon.Globe} />
           <Action.ShowInFinder path={folder.path} />
           <Action.CopyToClipboard title="Copy Path" content={folder.path} />
