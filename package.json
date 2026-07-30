@@ -15,6 +15,16 @@
       "mode": "view"
     }
   ],
+  "preferences": [
+    {
+      "name": "projectsDirectory",
+      "title": "Projects Folder",
+      "description": "The folder that contains your projects. Sub-folders can be browsed with the right arrow key.",
+      "type": "directory",
+      "required": false,
+      "default": "~/Projects"
+    }
+  ],
   "dependencies": {
     "@raycast/api": "^1.83.2"
   },

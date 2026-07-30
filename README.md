@@ -5,6 +5,7 @@ A Raycast extension to quickly launch your web development projects with Cursor,
 ## Features
 
 - **Quick Project Launcher** - Open projects in Cursor, iTerm, and Chrome with a single action
+- **Sub-folder Browsing** - Drill into folders that group several projects with the arrow keys
 - **Smart Project Detection** - Automatically detects DDEV and Astro projects
 - **Favorites** - Pin your frequently used projects for quick access
 - **Recent Projects** - Tracks your 10 most recently opened projects
@@ -22,18 +23,35 @@ A Raycast extension to quickly launch your web development projects with Cursor,
    - Select "Open in iTerm Only" - Start dev server only
    - Select "Open in Chrome Only" - Open browser only
 
+### Nested Projects
+
+If a project lives in a sub-folder (for example `brother/roi`), press `→` on the parent
+folder to browse inside it. Every action works the same at any depth, so you can open,
+favorite, or launch a nested project directly. Press `←` to go back up.
+
+Nested projects show the folder name as the title with the parent folder as a subtitle —
+`roi` with `brother` beneath it. Search still matches the full path, so typing `brother`
+finds everything inside it.
+
+Favorited and recently opened projects always appear on the first screen even when they
+live in a sub-folder, so you never have to drill in twice to reach one.
+
 ### Keyboard Shortcuts
 
 - `Cmd+F` - Add/remove project from favorites
 - `Enter` - Open project (all apps)
-- `Cmd+Shift+C` - Copy project path
+- `→` - Browse sub-folders
+- `←` - Go back up a level
+- `Cmd+Shift+Enter` - Open in Cursor only
+- `Cmd+Shift+C` - Open Claude Code in the project
 
 ## Supported Project Types
 
 ### DDEV Projects
 - Detects: `.ddev/config.yaml`
 - Runs: `ddev npm run dev`
-- Opens: `https://[projectname].ddev.site`
+- Opens: `https://[projectname].ddev.site`, where `projectname` is the `name:` value read from
+  `.ddev/config.yaml` (falling back to the folder name)
 
 ### Astro Projects
 - Detects: `astro` in package.json dependencies
@@ -42,14 +60,9 @@ A Raycast extension to quickly launch your web development projects with Cursor,
 
 ## Configuration
 
-By default, the extension looks for projects in `~/Sites`. To change this:
-
-1. Open the extension source code
-2. Edit line 9 in `src/index.tsx`:
-   ```typescript
-   const BASE_FOLDER = `${homedir()}/Sites`;
-   ```
-3. Rebuild the extension: `npm run build`
+By default, the extension looks for projects in `~/Projects`. To change this, open Raycast
+Settings → Extensions → **Launch Web Project** and set the **Projects Folder** preference.
+No code changes or rebuild required.
 
 ## Installation
 
@@ -97,7 +110,8 @@ project-launcher/
 
 ## How It Works
 
-1. **Project Detection**: Scans your projects folder for directories
+1. **Project Detection**: Scans your projects folder for directories; sub-folders are listed on
+   demand when you press `→`, so nothing is guessed about which folders group projects
 2. **Type Detection**: Checks for `.ddev/config.yaml` or Astro in `package.json`
 3. **Smart Sorting**: Favorites first, then recent projects, then alphabetical
 4. **Local Storage**: Favorites and recent projects persist across sessions
@@ -124,7 +138,8 @@ project-launcher/
 ## Troubleshooting
 
 ### Projects not showing up
-- Make sure your projects are in `~/Sites` (or your configured folder)
+- Make sure your projects are in `~/Projects` (or the folder set in the extension preferences)
+- If the project lives in a sub-folder, press `→` on its parent to browse inside
 - Check that the folder is readable
 - Try reloading the extension
 
@@ -156,6 +171,15 @@ MIT License - see LICENSE file for details
 Built for quickly launching web development projects with a single keystroke.
 
 ## Changelog
+
+### 1.1.0
+- Default projects folder is now `~/Projects` (was `~/Sites`) and is configurable from Raycast
+  Settings instead of in code
+- Browse projects nested in sub-folders with `→` / `←`
+- Nested projects display as folder name + parent subtitle, and search matches the full path
+- Favorites and recents are tracked by path relative to the projects folder, so nested projects
+  with the same folder name stay distinct, and pinned nested projects surface on the first screen
+- DDEV URLs use the `name:` from `.ddev/config.yaml` rather than assuming it matches the folder
 
 ### 1.0.0 (Initial Release)
 - Quick project launcher for Cursor, iTerm, and Chrome
