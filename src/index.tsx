@@ -31,6 +31,14 @@ function getBaseFolder(): string {
 
 const BASE_FOLDER = getBaseFolder();
 
+// Raycast doesn't inherit the login shell PATH, so look for the CLI directly
+// and fall back to launching the app when it isn't installed.
+const ZED_CLI = ["/usr/local/bin/zed", "/opt/homebrew/bin/zed", join(homedir(), ".local/bin/zed")].find(existsSync);
+
+function zedCommand(folderPath: string): string {
+  return ZED_CLI ? `"${ZED_CLI}" "${folderPath}"` : `open -a "Zed" "${folderPath}"`;
+}
+
 interface Folder {
   /** Folder name, e.g. "roi" */
   name: string;
@@ -154,9 +162,9 @@ async function addToRecent(folder: Folder) {
   await LocalStorage.setItem(RECENT_PROJECTS_KEY, JSON.stringify(newRecent));
 }
 
-async function openInCursor(folder: Folder) {
+async function openInZed(folder: Folder) {
   await addToRecent(folder);
-  exec(`cursor "${folder.path}"`, async (error) => {
+  exec(zedCommand(folder.path), async (error) => {
     if (error) {
       await showToast({
         style: Toast.Style.Failure,
@@ -339,8 +347,8 @@ async function openInSafari(folder: Folder) {
 }
 
 async function openProject(folder: Folder) {
-  // Open Cursor, iTerm (with Claude Code tab), and Safari
-  openInCursor(folder);
+  // Open Zed, iTerm (with Claude Code tab), and Safari
+  openInZed(folder);
   openInITerm(folder, { withClaudeCode: true });
   openInSafari(folder);
 }
@@ -544,8 +552,8 @@ function FolderListItem({ folder, recentProjects, toggleFavorite, isRoot }: Fold
             shortcut={{ modifiers: ["cmd"], key: "f" }}
           />
           <Action
-            title="Open in Cursor Only"
-            onAction={() => openInCursor(folder)}
+            title="Open in Zed Only"
+            onAction={() => openInZed(folder)}
             icon={Icon.Code}
             shortcut={{ modifiers: ["cmd", "shift"], key: "return" }}
           />

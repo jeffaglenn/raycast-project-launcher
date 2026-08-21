@@ -11,7 +11,7 @@
     {
       "name": "index",
       "title": "Launch Web Project",
-      "description": "Search and open a project folder in Cursor and other apps",
+      "description": "Search and open a project folder in Zed and other apps",
       "mode": "view"
     }
   ],

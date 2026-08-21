@@ -1,10 +1,10 @@
 # Personal Launch Web Project
 
-A Raycast extension to quickly launch your web development projects with Cursor, iTerm, and Chrome.
+A Raycast extension to quickly launch your web development projects with Zed, iTerm, and Safari.
 
 ## Features
 
-- **Quick Project Launcher** - Open projects in Cursor, iTerm, and Chrome with a single action
+- **Quick Project Launcher** - Open projects in Zed, iTerm, and Safari with a single action
 - **Sub-folder Browsing** - Drill into folders that group several projects with the arrow keys
 - **Smart Project Detection** - Automatically detects DDEV and Astro projects
 - **Favorites** - Pin your frequently used projects for quick access
@@ -17,11 +17,11 @@ A Raycast extension to quickly launch your web development projects with Cursor,
 
 1. Open Raycast and search for "Launch Web Project"
 2. Browse or search for your project
-3. Press Enter to open the project (Cursor + iTerm + Chrome)
+3. Press Enter to open the project (Zed + iTerm + Safari)
 4. Or use individual actions:
-   - `Cmd+Enter` - Open in Cursor only
+   - `Cmd+Shift+Enter` - Open in Zed only
    - Select "Open in iTerm Only" - Start dev server only
-   - Select "Open in Chrome Only" - Open browser only
+   - Select "Open in Safari Only" - Open browser only
 
 ### Nested Projects
 
@@ -42,7 +42,7 @@ live in a sub-folder, so you never have to drill in twice to reach one.
 - `Enter` - Open project (all apps)
 - `→` - Browse sub-folders
 - `←` - Go back up a level
-- `Cmd+Shift+Enter` - Open in Cursor only
+- `Cmd+Shift+Enter` - Open in Zed only
 - `Cmd+Shift+C` - Open Claude Code in the project
 
 ## Supported Project Types
@@ -93,9 +93,9 @@ npm run dev
 ## Requirements
 
 - [Raycast](https://raycast.com/) - macOS productivity app
-- [Cursor](https://cursor.sh/) - AI-powered code editor
+- [Zed](https://zed.dev/) - Code editor (uses the `zed` CLI if installed, otherwise `open -a "Zed"`)
 - [iTerm2](https://iterm2.com/) - Terminal emulator
-- [Google Chrome](https://www.google.com/chrome/) - Web browser
+- [Safari](https://www.apple.com/safari/) - Web browser
 
 ## Project Structure
 
@@ -115,7 +115,7 @@ project-launcher/
 2. **Type Detection**: Checks for `.ddev/config.yaml` or Astro in `package.json`
 3. **Smart Sorting**: Favorites first, then recent projects, then alphabetical
 4. **Local Storage**: Favorites and recent projects persist across sessions
-5. **Multi-App Launch**: Opens Cursor, starts dev server in iTerm, and opens browser
+5. **Multi-App Launch**: Opens Zed, starts dev server in iTerm, and opens browser
 
 ## Features in Detail
 
@@ -147,8 +147,7 @@ project-launcher/
 - Make sure iTerm2 is installed
 - Grant Raycast accessibility permissions in System Preferences
 
-### Chrome not opening
-- Make sure Google Chrome is installed in `/Applications`
+### Safari not opening
 - Check that the URL is correct for your project type
 
 ### Dev server not starting
@@ -182,7 +181,7 @@ Built for quickly launching web development projects with a single keystroke.
 - DDEV URLs use the `name:` from `.ddev/config.yaml` rather than assuming it matches the folder
 
 ### 1.0.0 (Initial Release)
-- Quick project launcher for Cursor, iTerm, and Chrome
+- Quick project launcher for Zed, iTerm, and Safari
 - DDEV and Astro project detection
 - Favorites and recent projects
 - Organized sections with visual indicators
